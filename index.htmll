@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Responsa Missæ — entraînement du servant d'autel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   PALETTE ET TYPOGRAPHIE
+   Inspirées de la page d'un missel : papier ivoire, encre noire,
+   rubrique rouge. Le rouge marque toujours ce que dit le
+   CÉLÉBRANT (verset ℣), l'encre noire ce que dit le SERVANT (℟).
+   ============================================================ */
+:root{
+  --papier:      #F5F3EE;
+  --papier-haut: #FBFAF7;
+  --encre:       #17150F;
+  --encre-pale:  #6E685C;
+  --rubrique:    #A1201A;
+  --filet:       #DCD6C8;
+
+  --serif: "EB Garamond", Georgia, "Iowan Old Style", "Palatino Linotype", "Times New Roman", serif;
+}
+
+*{ box-sizing: border-box; }
+html{ -webkit-text-size-adjust: 100%; }
+
+body{
+  margin: 0;
+  background: var(--papier);
+  color: var(--encre);
+  font-family: var(--serif);
+  font-size: 18px;
+  line-height: 1.55;
+}
+
+.page{
+  max-width: 36rem;
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 5rem;
+}
+
+/* ---------- En-tête ---------- */
+.masthead{
+  border-bottom: 1px solid var(--filet);
+  padding-bottom: 1.1rem;
+  margin-bottom: 2rem;
+}
+.masthead h1{ font-size: 1.5rem; font-weight: 500; margin: 0; letter-spacing: .01em; }
+.masthead p{ margin: .3rem 0 0; font-style: italic; font-size: .95rem; color: var(--encre-pale); }
+
+/* ---------- Panneau vivant ---------- */
+.pupitre{
+  border-left: 2px solid var(--rubrique);
+  padding: .2rem 0 .2rem 1.1rem;
+  min-height: 11rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.entendu{
+  color: var(--encre-pale);
+  font-style: italic;
+  font-size: 1rem;
+  min-height: 3.2rem;
+  margin: 0 0 1rem;
+}
+.entendu .marque{ font-style: normal; color: var(--rubrique); margin-right: .35rem; }
+
+.reponse{
+  font-size: 1.55rem;
+  line-height: 1.32;
+  font-weight: 500;
+  margin: 0;
+  min-height: 4rem;
+}
+.reponse .marque{ color: var(--rubrique); font-weight: 400; margin-right: .35rem; }
+.reponse.entre{ animation: entre .35s ease-out; }
+@keyframes entre{ from{ opacity: 0; } to{ opacity: 1; } }
+
+.repere{ margin: .55rem 0 0; font-size: .85rem; color: var(--encre-pale); font-style: italic; }
+
+/* ---------- Commande principale ---------- */
+.commande{
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin: 2.2rem 0 0;
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--filet);
+}
+
+button{ font-family: var(--serif); font-size: 1rem; cursor: pointer; }
+
+#btnPrincipal{
+  background: var(--papier-haut);
+  color: var(--rubrique);
+  border: 1px solid var(--rubrique);
+  border-radius: 2px;
+  padding: .6rem 1.3rem;
+  transition: background .15s, color .15s;
+}
+#btnPrincipal:hover{ background: #EFE9E1; }
+#btnPrincipal.actif{ background: var(--rubrique); color: var(--papier-haut); }
+#btnPrincipal:disabled{ opacity: .45; cursor: not-allowed; }
+
+.etat{ display: flex; align-items: center; gap: .5rem; font-size: .9rem; color: var(--encre-pale); }
+.temoin{ width: 9px; height: 9px; border-radius: 50%; background: var(--filet); flex: 0 0 auto; }
+.temoin.ecoute{ background: var(--rubrique); animation: souffle 2.4s ease-in-out infinite; }
+.temoin.parle{ background: var(--encre); }
+@keyframes souffle{ 0%,100%{ opacity: 1; } 50%{ opacity: .25; } }
+
+/* ---------- Réglages ---------- */
+.reglages{ margin-top: 1.6rem; display: grid; gap: .75rem; font-size: .9rem; color: var(--encre-pale); }
+.reglage{ display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+.reglage label{ min-width: 8.5rem; }
+select, input[type=range]{ font-family: var(--serif); font-size: .9rem; accent-color: var(--rubrique); }
+select{
+  background: var(--papier-haut);
+  border: 1px solid var(--filet);
+  border-radius: 2px;
+  padding: .2rem .35rem;
+  color: var(--encre);
+  max-width: 15rem;
+}
+input[type=checkbox]{ accent-color: var(--rubrique); }
+
+#btnOublier{
+  background: none;
+  border: 1px solid var(--filet);
+  border-radius: 2px;
+  padding: .3rem .7rem;
+  font-size: .85rem;
+  color: var(--encre-pale);
+}
+
+/* ---------- Répertoire ---------- */
+details{ margin-top: 2.4rem; border-top: 1px solid var(--filet); padding-top: 1.2rem; }
+summary{
+  cursor: pointer;
+  font-size: .95rem;
+  color: var(--encre-pale);
+  font-style: italic;
+  list-style: none;
+}
+summary::-webkit-details-marker{ display: none; }
+summary::before{ content: "❦"; color: var(--rubrique); margin-right: .5rem; font-style: normal; }
+
+.partie{
+  margin: 1.7rem 0 .6rem;
+  font-size: .85rem;
+  color: var(--rubrique);
+  font-style: italic;
+  border-bottom: 1px solid var(--filet);
+  padding-bottom: .3rem;
+}
+
+.paire{ display: flex; align-items: flex-start; gap: .5rem; margin-bottom: .15rem; }
+
+.ecouter{
+  flex: 1;
+  text-align: left;
+  background: none;
+  border: 0;
+  border-radius: 2px;
+  padding: .5rem .4rem;
+  color: inherit;
+  line-height: 1.4;
+  font-size: 1rem;
+}
+.ecouter:hover{ background: #EDE8DF; }
+.ecouter .v{ color: var(--rubrique); font-size: .95rem; display: block; }
+.ecouter .r{ font-weight: 500; display: block; margin-top: .1rem; }
+.ecouter .marque{ color: var(--rubrique); margin-right: .3rem; }
+.ecouter .manuel{ font-size: .8rem; font-style: italic; color: var(--encre-pale); }
+.ecouter .appris{ font-size: .78rem; font-style: italic; color: var(--encre-pale); display: block; margin-top: .2rem; }
+
+.apprendre{
+  flex: 0 0 auto;
+  align-self: center;
+  background: var(--papier-haut);
+  border: 1px solid var(--filet);
+  border-radius: 2px;
+  padding: .3rem .55rem;
+  font-size: .8rem;
+  color: var(--rubrique);
+  white-space: nowrap;
+}
+.apprendre[hidden]{ display: none; }
+.apprendre.encours{ background: var(--rubrique); color: var(--papier-haut); border-color: var(--rubrique); }
+
+.note{ margin-top: 2rem; font-size: .85rem; color: var(--encre-pale); line-height: 1.5; }
+
+.alerte{
+  border: 1px solid var(--rubrique);
+  border-radius: 2px;
+  padding: .8rem 1rem;
+  margin-bottom: 1.5rem;
+  font-size: .92rem;
+  color: var(--rubrique);
+  background: var(--papier-haut);
+}
+.alerte[hidden]{ display: none; }
+
+:focus-visible{ outline: 2px solid var(--rubrique); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+
+<body>
+<main class="page">
+
+  <header class="masthead">
+    <h1>Responsa Missæ</h1>
+    <p>Entraînement aux réponses du servant — messe traditionnelle, missel de 1962</p>
+  </header>
+
+  <div class="alerte" id="alerte" hidden></div>
+
+  <section class="pupitre" aria-live="polite">
+    <p class="entendu"><span class="marque">℣</span><span id="entenduTexte">Rien d'entendu pour l'instant.</span></p>
+    <p class="reponse" id="reponse"><span class="marque">℟</span><span id="reponseTexte">—</span></p>
+    <p class="repere" id="repere"></p>
+  </section>
+
+  <div class="commande">
+    <button id="btnPrincipal">Démarrer l'entraînement</button>
+    <span class="etat">
+      <span class="temoin" id="temoin"></span>
+      <span id="etatTexte">À l'arrêt</span>
+    </span>
+  </div>
+
+  <div class="reglages">
+    <div class="reglage">
+      <label for="selVoix">Voix</label>
+      <select id="selVoix"></select>
+    </div>
+    <div class="reglage">
+      <label for="rngDebit">Débit</label>
+      <input type="range" id="rngDebit" min="0.6" max="1.2" step="0.05" value="0.85">
+      <span id="valDebit">0.85</span>
+    </div>
+    <div class="reglage">
+      <label for="selLangue">Langue du micro</label>
+      <select id="selLangue">
+        <option value="it-IT" selected>Italien</option>
+        <option value="es-ES">Espagnol</option>
+        <option value="pt-PT">Portugais</option>
+        <option value="fr-FR">Français</option>
+      </select>
+    </div>
+    <div class="reglage">
+      <input type="checkbox" id="chkTolerance" checked>
+      <label for="chkTolerance" style="min-width:auto">Tolérer les transcriptions approximatives</label>
+    </div>
+    <div class="reglage">
+      <input type="checkbox" id="chkEnchainement" checked>
+      <label for="chkEnchainement" style="min-width:auto">Enchaîner le Confíteor après le Misereátur</label>
+    </div>
+    <div class="reglage">
+      <input type="checkbox" id="chkApprentissage">
+      <label for="chkApprentissage" style="min-width:auto">Mode apprentissage</label>
+      <button id="btnOublier" type="button">Tout oublier</button>
+    </div>
+  </div>
+
+  <details id="repertoire">
+    <summary>Voir tous les répons reconnus — touchez une ligne pour l'entendre</summary>
+    <div id="listeRepertoire"></div>
+  </details>
+
+  <p class="note">
+    Le moteur de reconnaissance ne connaît pas le latin : réglé sur l'italien, il transforme
+    « vobíscum » en « solo con ». Le mode apprentissage sert à ça. Activez-le, touchez
+    <em>Apprendre</em> sur une ligne, prononcez la phrase du prêtre : l'application retient ce
+    qu'elle a réellement entendu et s'en sert comme signal. Ce qu'elle apprend reste sur cet
+    appareil.
+  </p>
+
+</main>
+
+<script>
+"use strict";
+
+/* ============================================================
+   1. LE RÉPERTOIRE
+   ------------------------------------------------------------
+     partie        : section de la messe (affichage)
+     celebrant     : ce que dit le prêtre (affichage)
+     declencheurs  : suites de lettres cherchées dans la
+                     transcription. Ce ne sont que des amorces :
+                     le mode apprentissage en ajoute de bien
+                     meilleures, propres à votre voix.
+     reponse       : texte à dire. Un TABLEAU est parcouru élément
+                     par élément à chaque déclenchement (Kyrie).
+     manuel        : aucun signal fiable, ligne à toucher.
+     suite         : réponse enchaînée après un délai (Confíteor).
+     attente       : délai minimal avant un nouveau déclenchement.
+   ============================================================ */
+const REPERTOIRE = [
+
+  /* ---------- Prières au bas de l'autel ---------- */
+  {
+    partie: "Prières au bas de l'autel",
+    celebrant: "Introíbo ad altáre Dei.",
+    declencheurs: ["introibo", "untoybo", "toybo", "altare", "altavilla"],
+    reponse: "Ad Deum qui lætíficat juventútem meam."
+  },
+  {
+    partie: "Prières au bas de l'autel",
+    celebrant: "Júdica me, Deus, et discérne causam meam… érue me.",
+    declencheurs: ["judicame", "giudicame", "discernecausam", "eruemede"],
+    reponse: "Quia tu es, Deus, fortitúdo mea: quare me repulísti, et quare tristis incédo, dum afflígit me inimícus?"
+  },
+  {
+    partie: "Prières au bas de l'autel",
+    celebrant: "Emítte lucem tuam et veritátem tuam…",
+    declencheurs: ["emittelucem", "emitteluce", "emittelucia"],
+    reponse: "Et introíbo ad altáre Dei: ad Deum qui lætíficat juventútem meam."
+  },
+  {
+    partie: "Prières au bas de l'autel",
+    celebrant: "Confitébor tibi in cíthara, Deus, Deus meus…",
+    declencheurs: ["confitebortibi", "incithara", "chitarra"],
+    reponse: "Spera in Deo, quóniam adhuc confitébor illi: salutáre vultus mei, et Deus meus."
+  },
+  {
+    partie: "Prières au bas de l'autel",
+    celebrant: "Glória Patri, et Fílio, et Spirítui Sancto.",
+    declencheurs: ["gloriapatri", "gloriapadri"],
+    reponse: "Sicut erat in princípio, et nunc, et semper, et in sǽcula sæculórum. Amen."
+  },
+  {
+    partie: "Prières au bas de l'autel",
+    celebrant: "Adjutórium nostrum in nómine Dómini.",
+    declencheurs: ["adjutorium", "aiutorio", "aggiuntorio", "adiutorium"],
+    reponse: "Qui fecit cælum et terram."
+  },
+  {
+    partie: "Prières au bas de l'autel",
+    celebrant: "Confíteor du prêtre — … oráre pro me ad Dóminum Deum nostrum.",
+    declencheurs: ["orareprome", "orareperme", "orarpromé"],
+    reponse: "Misereátur tui omnípotens Deus, et dimíssis peccátis tuis, perdúcat te ad vitam ætérnam. Amen.",
+    suite: {
+      delai: 4500,
+      texte: "Confíteor Deo omnipoténti, beátæ Maríæ semper Vírgini, beáto Michaéli Archángelo, beáto Joánni Baptístæ, sanctis Apóstolis Petro et Paulo, ómnibus Sanctis, et tibi, pater: quia peccávi nimis cogitatióne, verbo et ópere: mea culpa, mea culpa, mea máxima culpa. Ídeo precor beátam Maríam semper Vírginem, beátum Michaélem Archángelum, beátum Joánnem Baptístam, sanctos Apóstolos Petrum et Paulum, omnes Sanctos, et te, pater, oráre pro me ad Dóminum Deum nostrum."
+    }
+  },
+  {
+    partie: "Prières au bas de l'autel",
+    celebrant: "Misereátur vestri omnípotens Deus…",
+    declencheurs: ["misereaturvestri", "miserere avestri"],
+    reponse: "Amen."
+  },
+  {
+    partie: "Prières au bas de l'autel",
+    celebrant: "Indulgéntiam, absolutiónem et remissiónem…",
+    declencheurs: ["indulgentiam", "indulgenza"],
+    reponse: "Amen."
+  },
+  {
+    partie: "Prières au bas de l'autel",
+    celebrant: "Deus, tu convérsus vivificábis nos.",
+    declencheurs: ["tuconversus", "vivificabis", "vivifica"],
+    reponse: "Et plebs tua lætábitur in te."
+  },
+  {
+    partie: "Prières au bas de l'autel",
+    celebrant: "Osténde nobis, Dómine, misericórdiam tuam.",
+    declencheurs: ["ostendenobis", "ostende"],
+    reponse: "Et salutáre tuum da nobis."
+  },
+  {
+    partie: "Prières au bas de l'autel",
+    celebrant: "Dómine, exáudi oratiónem meam.",
+    declencheurs: ["exaudiorationem", "esaudi", "orazione"],
+    reponse: "Et clamor meus ad te véniat."
+  },
+  {
+    partie: "Prières au bas de l'autel",
+    celebrant: "Dóminus vobíscum.",
+    declencheurs: ["vobiscum", "solocon", "dominasolocon", "vobisco"],
+    reponse: "Et cum spíritu tuo."
+  },
+
+  /* ---------- Kyrie et oraisons ---------- */
+  {
+    partie: "Kyrie et oraisons",
+    celebrant: "Kýrie eléison. / Christe eléison. — en alternance",
+    declencheurs: ["kyrieleison", "chirieleison", "christeleison", "eleison"],
+    reponse: ["Kýrie eléison.", "Christe eléison.", "Christe eléison.", "Kýrie eléison."],
+    attente: 1500
+  },
+  {
+    partie: "Kyrie et oraisons",
+    celebrant: "… per ómnia sǽcula sæculórum.",
+    declencheurs: ["seculaseculorum", "seculorum", "sicura sicuro"],
+    reponse: "Amen."
+  },
+
+  /* ---------- Épître et Évangile ---------- */
+  {
+    partie: "Épître et Évangile",
+    celebrant: "Fin de l'Épître",
+    declencheurs: [],
+    reponse: "Deo grátias.",
+    manuel: true
+  },
+  {
+    partie: "Épître et Évangile",
+    celebrant: "Sequéntia sancti Evangélii secúndum N.",
+    declencheurs: ["evangelii", "evangeli", "sequentia", "initium"],
+    reponse: "Glória tibi, Dómine."
+  },
+  {
+    partie: "Épître et Évangile",
+    celebrant: "Fin de l'Évangile",
+    declencheurs: [],
+    reponse: "Laus tibi, Christe.",
+    manuel: true
+  },
+
+  /* ---------- Offertoire ---------- */
+  {
+    partie: "Offertoire",
+    celebrant: "Oráte, fratres…",
+    declencheurs: ["oratefratres", "oratifratelli", "fratres"],
+    reponse: "Suscípiat Dóminus sacrifícium de mánibus tuis ad laudem et glóriam nóminis sui, ad utilitátem quoque nostram, totiúsque Ecclésiæ suæ sanctæ."
+  },
+
+  /* ---------- Préface ---------- */
+  {
+    partie: "Préface",
+    celebrant: "Sursum corda.",
+    declencheurs: ["sursumcorda", "sursucorda", "corda"],
+    reponse: "Habémus ad Dóminum."
+  },
+  {
+    partie: "Préface",
+    celebrant: "Grátias agámus Dómino Deo nostro.",
+    declencheurs: ["gratiasagamus", "graziasagamus", "agamus"],
+    reponse: "Dignum et justum est."
+  },
+
+  /* ---------- Pater et communion ---------- */
+  {
+    partie: "Pater et communion",
+    celebrant: "Et ne nos indúcas in tentatiónem.",
+    declencheurs: ["nenosinducas", "inducas", "tentationem"],
+    reponse: "Sed líbera nos a malo."
+  },
+  {
+    partie: "Pater et communion",
+    celebrant: "Pax Dómini sit semper vobíscum.",
+    declencheurs: ["paxdomini", "pacedomini"],
+    reponse: "Et cum spíritu tuo."
+  },
+
+  /* ---------- Renvoi et dernier Évangile ---------- */
+  {
+    partie: "Renvoi et dernier Évangile",
+    celebrant: "Ite, missa est.",
+    declencheurs: ["itemissaest", "itemissa"],
+    reponse: "Deo grátias."
+  },
+  {
+    partie: "Renvoi et dernier Évangile",
+    celebrant: "Benedicámus Dómino.",
+    declencheurs: ["benedicamusdomino", "benedicamus"],
+    reponse: "Deo grátias."
+  },
+  {
+    partie: "Renvoi et dernier Évangile",
+    celebrant: "Requiéscant in pace.",
+    declencheurs: ["requiescantinpace", "requiescant"],
+    reponse: "Amen."
+  },
+  {
+    partie: "Renvoi et dernier Évangile",
+    celebrant: "… plenum grátiæ et veritátis.",
+    declencheurs: ["gratiaeetveritatis", "veritatis", "plenumgratiae"],
+    reponse: "Deo grátias."
+  }
+];
+
+REPERTOIRE.forEach((e, i) => { e.id = i; e.curseur = 0; e.dernierTir = 0; e.appris = []; });
+
+
+/* ============================================================
+   2. NORMALISATION PHONÉTIQUE
+   ------------------------------------------------------------
+   Toute comparaison se fait sur une chaîne réduite : minuscules,
+   sans accents, sans espaces, puis rabotée sur les sons qui se
+   confondent en italien. « untoybo » et « introibo » deviennent
+   « untoibo » et « introibo » : deux corrections d'écart, ce que
+   la tolérance absorbe.
+   ============================================================ */
+function compacter(texte){
+  let t = texte
+    .toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/æ/g, "ae").replace(/œ/g, "oe")
+    .replace(/[^a-z]/g, "");
+
+  t = t.replace(/ti(?=[aeiou])/g, "zi");   // grátia = grazia
+  t = t.replace(/h/g, "");                 // h muet
+  t = t.replace(/[yj]/g, "i");             // y et j sonnent i
+  t = t.replace(/qu/g, "c").replace(/k/g, "c").replace(/x/g, "cs");
+  t = t.replace(/(.)\1+/g, "$1");          // consonnes doublées
+  return t;
+}
+
+/* Distance de Levenshtein. */
+function distance(a, b){
+  const n = b.length;
+  let precedente = Array.from({length: n + 1}, (_, j) => j);
+  let courante = new Array(n + 1);
+  for (let i = 1; i <= a.length; i++){
+    courante[0] = i;
+    for (let j = 1; j <= n; j++){
+      const cout = a[i - 1] === b[j - 1] ? 0 : 1;
+      courante[j] = Math.min(precedente[j] + 1, courante[j - 1] + 1, precedente[j - 1] + cout);
+    }
+    const t = precedente; precedente = courante; courante = t;
+  }
+  return precedente[n];
+}
+
+/* Le déclencheur apparaît-il dans la transcription ? */
+function contient(transcription, cible, tolerant){
+  if (cible.length < 4) return false;
+  if (transcription.includes(cible)) return true;
+  if (!tolerant) return false;
+
+  const marge = Math.min(3, Math.floor(cible.length / 3.5));
+  if (marge < 1) return false;
+
+  for (let taille = Math.max(1, cible.length - marge); taille <= cible.length + marge; taille++){
+    for (let i = 0; i + taille <= transcription.length; i++){
+      if (distance(transcription.substr(i, taille), cible) <= marge) return true;
+    }
+  }
+  return false;
+}
+
+/* On retient l'entrée dont le déclencheur reconnu est le plus long,
+   donc le plus spécifique. Les mots appris passent avant les amorces. */
+function chercherReponse(texteBrut){
+  const transcription = compacter(texteBrut);
+  if (transcription.length < 4) return null;
+
+  const tolerant = chkTolerance.checked;
+  let meilleure = null, score = 0;
+
+  for (const entree of REPERTOIRE){
+    const listes = [
+      { mots: entree.appris,       bonus: 100 },
+      { mots: entree.declencheurs, bonus: 0   }
+    ];
+    for (const liste of listes){
+      for (const mot of liste.mots){
+        const cible = compacter(mot);
+        const valeur = cible.length + liste.bonus;
+        if (valeur > score && contient(transcription, cible, tolerant)){
+          meilleure = entree;
+          score = valeur;
+        }
+      }
+    }
+  }
+  return meilleure;
+}
+
+
+/* ============================================================
+   3. PRONONCIATION POUR LA VOIX
+   ------------------------------------------------------------
+   On donne à la voix italienne une graphie italienne du latin :
+     æ, œ → e      j → i      ti + voyelle → zi
+   Le c devant e/i, le sc, le gn, le ch et le h muet sont déjà
+   justes en italien.
+   ============================================================ */
+const PRONONCIATION_SPECIALE = {
+  "mihi": "michi",
+  "nihil": "nichil",
+  "excelsis": "escelsis"
+};
+
+function versPhonetique(texte){
+  let t = texte
+    .replace(/æ|ǽ/g, "e").replace(/Æ/g, "E")
+    .replace(/œ/g, "e").replace(/Œ/g, "E")
+    .replace(/j/g, "i").replace(/J/g, "I")
+    .replace(/y/g, "i").replace(/Y/g, "I")
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+  t = t.replace(/([^stxST\s])ti([aeiou])/g, "$1zi$2");
+
+  t = t.replace(/[A-Za-zÀ-ÿ]+/g, mot => PRONONCIATION_SPECIALE[mot.toLowerCase()] || mot);
+  return t;
+}
+
+
+/* ============================================================
+   4. ÉLÉMENTS DE L'INTERFACE
+   ============================================================ */
+const btnPrincipal     = document.getElementById("btnPrincipal");
+const temoin           = document.getElementById("temoin");
+const etatTexte        = document.getElementById("etatTexte");
+const entenduTexte     = document.getElementById("entenduTexte");
+const reponseEl        = document.getElementById("reponse");
+const reponseTexte     = document.getElementById("reponseTexte");
+const repere           = document.getElementById("repere");
+const selVoix          = document.getElementById("selVoix");
+const rngDebit         = document.getElementById("rngDebit");
+const valDebit         = document.getElementById("valDebit");
+const selLangue        = document.getElementById("selLangue");
+const chkTolerance     = document.getElementById("chkTolerance");
+const chkEnchainement  = document.getElementById("chkEnchainement");
+const chkApprentissage = document.getElementById("chkApprentissage");
+const btnOublier       = document.getElementById("btnOublier");
+const alerte           = document.getElementById("alerte");
+const listeRepertoire  = document.getElementById("listeRepertoire");
+
+const etat = {
+  actif: false,      // mode entraînement enclenché
+  enMarche: false,   // la reconnaissance tourne réellement
+  parle: false,      // la synthèse est en train de parler
+  apprend: false     // capture d'un nouveau signal
+};
+
+
+/* ============================================================
+   5. MÉMOIRE DES SIGNAUX APPRIS
+   ============================================================ */
+const CLE = "responsa-appris-v1";
+
+function chargerAppris(){
+  try{
+    const brut = localStorage.getItem(CLE);
+    if (!brut) return;
+    const donnees = JSON.parse(brut);
+    Object.keys(donnees).forEach(id => {
+      const entree = REPERTOIRE[Number(id)];
+      if (entree && Array.isArray(donnees[id])) entree.appris = donnees[id];
+    });
+  } catch (e){ /* stockage indisponible : on continue sans */ }
+}
+
+function sauverAppris(){
+  try{
+    const donnees = {};
+    REPERTOIRE.forEach(e => { if (e.appris.length) donnees[e.id] = e.appris; });
+    localStorage.setItem(CLE, JSON.stringify(donnees));
+  } catch (e){}
+}
+chargerAppris();
+
+
+/* ============================================================
+   6. SYNTHÈSE VOCALE
+   ------------------------------------------------------------
+   window.speechSynthesis, jamais l'identifiant nu : là où l'API
+   manque, un identifiant nu lève une ReferenceError qui tue tout
+   le script, alors qu'une propriété de window vaut undefined.
+
+   Sur mobile, le son ne sort que si la toute première prise de
+   parole part directement d'un geste. D'où deverrouillerAudio(),
+   appelé de façon synchrone dans les gestionnaires de clic, et
+   l'absence de setTimeout devant le premier speak().
+   ============================================================ */
+const SYNTHESE = window.speechSynthesis || null;
+const Enonce   = window.SpeechSynthesisUtterance || null;
+
+let voixDisponibles = [];
+let audioDebloque = false;
+
+function deverrouillerAudio(){
+  if (audioDebloque || !SYNTHESE || !Enonce) return;
+  try{
+    const u = new Enonce(" ");
+    u.volume = 0;
+    SYNTHESE.speak(u);
+    audioDebloque = true;
+  } catch (e){}
+}
+
+function chargerVoix(){
+  if (!SYNTHESE) return;
+  voixDisponibles = SYNTHESE.getVoices();
+  if (!voixDisponibles.length) return;
+
+  const italiennes = voixDisponibles.filter(v => v.lang.toLowerCase().startsWith("it"));
+  const autres     = voixDisponibles.filter(v => !v.lang.toLowerCase().startsWith("it"));
+
+  const choixActuel = selVoix.value;
+  selVoix.innerHTML = "";
+  [...italiennes, ...autres].forEach(v => {
+    const opt = document.createElement("option");
+    opt.value = v.name;
+    opt.textContent = v.name + " (" + v.lang + ")";
+    selVoix.appendChild(opt);
+  });
+  if (choixActuel) selVoix.value = choixActuel;
+
+  if (!italiennes.length){
+    afficherAlerte("Aucune voix italienne sur cet appareil : la prononciation sera approximative. Android : Paramètres → Langues → Synthèse vocale → installer l'italien. iPhone : Réglages → Accessibilité → Contenu énoncé → Voix.");
+  }
+}
+if (SYNTHESE) SYNTHESE.onvoiceschanged = chargerVoix;
+chargerVoix();
+
+function voixChoisie(){
+  return voixDisponibles.find(v => v.name === selVoix.value) || null;
+}
+
+/* Prononce une suite de segments : [{texte, pause}, …].
+   Le micro est coupé pendant toute la séquence, puis rouvert. */
+function parler(segments, quandFini){
+  if (!SYNTHESE || !Enonce){
+    if (quandFini) quandFini();
+    return;
+  }
+
+  etat.parle = true;
+  arreterReconnaissance();
+  rafraichirEtat();
+
+  let i = 0;
+  const suivant = () => {
+    if (i >= segments.length){
+      etat.parle = false;
+      rafraichirEtat();
+      if (etat.actif) setTimeout(demarrerReconnaissance, 400);
+      if (quandFini) quandFini();
+      return;
+    }
+    const segment = segments[i++];
+
+    const dire = () => {
+      const u = new Enonce(versPhonetique(segment.texte));
+      const v = voixChoisie();
+      if (v){ u.voice = v; u.lang = v.lang; } else { u.lang = "it-IT"; }
+      u.rate = parseFloat(rngDebit.value);
+      u.pitch = 1;
+      u.onend = suivant;
+      u.onerror = suivant;
+      if (segment.avantDeParler) segment.avantDeParler();
+      try{ SYNTHESE.resume(); } catch (e){}   // Chrome laisse parfois la file en pause
+      SYNTHESE.speak(u);
+    };
+
+    // Sans pause demandée, on parle tout de suite : un setTimeout ici
+    // romprait le lien avec le geste et le son ne sortirait pas.
+    if (segment.pause) setTimeout(dire, segment.pause);
+    else dire();
+  };
+  suivant();
+}
+
+
+/* ============================================================
+   7. RECONNAISSANCE VOCALE
+   ============================================================ */
+const Reconnaissance = window.SpeechRecognition || window.webkitSpeechRecognition;
+let reco = null;
+let capture = null;   // { entree, bouton, texte } pendant l'apprentissage
+
+if (Reconnaissance){
+  reco = new Reconnaissance();
+  reco.continuous = true;
+  reco.interimResults = true;
+  reco.lang = selLangue.value;
+  reco.maxAlternatives = 3;
+
+  reco.onstart = () => { etat.enMarche = true; rafraichirEtat(); };
+
+  reco.onresult = (evt) => {
+    if (etat.parle) return;
+
+    const dernier = evt.results[evt.results.length - 1];
+    const hypotheses = [];
+    for (let i = 0; i < dernier.length; i++) hypotheses.push(dernier[i].transcript);
+
+    const principal = (hypotheses[0] || "").trim();
+    entenduTexte.textContent = principal || "…";
+
+    // Apprentissage : on retient le texte au lieu de chercher une réponse.
+    if (etat.apprend){
+      if (principal) capture.texte = principal;
+      if (dernier.isFinal) terminerApprentissage();
+      return;
+    }
+
+    for (const h of hypotheses){
+      const entree = chercherReponse(h);
+      if (entree){ declencher(entree); return; }
+    }
+  };
+
+  reco.onerror = (evt) => {
+    if (evt.error === "not-allowed" || evt.error === "service-not-allowed"){
+      afficherAlerte("Le micro est refusé. Autorisez-le pour ce site, puis relancez.");
+      arreterTout();
+    }
+  };
+
+  reco.onend = () => {
+    etat.enMarche = false;
+    rafraichirEtat();
+    if ((etat.actif || etat.apprend) && !etat.parle) setTimeout(demarrerReconnaissance, 250);
+  };
+}
+
+function demarrerReconnaissance(){
+  if (!reco || etat.enMarche || etat.parle) return;
+  if (!etat.actif && !etat.apprend) return;
+  reco.lang = selLangue.value;
+  try { reco.start(); } catch (e){}
+}
+
+function arreterReconnaissance(){
+  if (!reco) return;
+  try { reco.abort(); } catch (e){}
+  etat.enMarche = false;
+}
+
+
+/* ============================================================
+   8. DÉCLENCHEMENT D'UNE RÉPONSE
+   ============================================================ */
+function declencher(entree){
+  const maintenant = Date.now();
+  if (maintenant - entree.dernierTir < (entree.attente || 4000)) return;
+  entree.dernierTir = maintenant;
+
+  let texte;
+  if (Array.isArray(entree.reponse)){
+    texte = entree.reponse[entree.curseur % entree.reponse.length];
+    entree.curseur++;
+  } else {
+    texte = entree.reponse;
+  }
+
+  afficherReponse(texte, entree.partie);
+
+  const segments = [{ texte }];
+  if (entree.suite && chkEnchainement.checked){
+    segments.push({
+      texte: entree.suite.texte,
+      pause: entree.suite.delai,
+      avantDeParler: () => afficherReponse(entree.suite.texte, entree.partie)
+    });
+  }
+  parler(segments);
+}
+
+function afficherReponse(texte, partie){
+  reponseTexte.textContent = texte;
+  repere.textContent = partie || "";
+  reponseEl.classList.remove("entre");
+  void reponseEl.offsetWidth;
+  reponseEl.classList.add("entre");
+}
+/* ============================================================
+   9. APPRENTISSAGE D'UN SIGNAL
+   ============================================================ */
+let minuterieApprentissage = null;
+
+function lancerApprentissage(entree, bouton){
+  if (!reco){
+    afficherAlerte("La reconnaissance vocale n'est pas disponible ici.");
+    return;
+  }
+  if (etat.apprend) return;
+
+  arreterTout();
+  capture = { entree, bouton, texte: "" };
+  etat.apprend = true;
+  bouton.classList.add("encours");
+  bouton.textContent = "Parlez…";
+  entenduTexte.textContent = "Prononcez : " + entree.celebrant;
+  demarrerReconnaissance();
+  rafraichirEtat();
+
+  minuterieApprentissage = setTimeout(terminerApprentissage, 7000);
+}
+
+function terminerApprentissage(){
+  if (!etat.apprend) return;
+  etat.apprend = false;
+  clearTimeout(minuterieApprentissage);
+  arreterReconnaissance();
+
+  const { entree, bouton, texte } = capture;
+  bouton.classList.remove("encours");
+  bouton.textContent = "Apprendre";
+
+  const cle = compacter(texte);
+  if (cle.length >= 4 && !entree.appris.some(m => compacter(m) === cle)){
+    entree.appris.push(texte.trim());
+    sauverAppris();
+    entenduTexte.textContent = "Retenu : « " + texte.trim() + " »";
+  } else if (!cle.length){
+    entenduTexte.textContent = "Rien entendu. Réessayez en parlant plus près du micro.";
+  } else {
+    entenduTexte.textContent = "Déjà connu : « " + texte.trim() + " »";
+  }
+
+  construireRepertoire();
+  rafraichirEtat();
+}
+
+
+/* ============================================================
+   10. MARCHE / ARRÊT
+   ============================================================ */
+btnPrincipal.addEventListener("click", () => {
+  deverrouillerAudio();               // doit rester synchrone dans le geste
+  if (etat.actif) arreterTout();
+  else demarrerTout();
+});
+
+function demarrerTout(){
+  etat.actif = true;
+  btnPrincipal.textContent = "Arrêter";
+  btnPrincipal.classList.add("actif");
+  entenduTexte.textContent = "En attente du célébrant…";
+  reponseTexte.textContent = "—";
+  repere.textContent = "";
+  REPERTOIRE.forEach(e => { e.curseur = 0; e.dernierTir = 0; });
+  demarrerReconnaissance();
+  rafraichirEtat();
+}
+
+function arreterTout(){
+  etat.actif = false;
+  etat.parle = false;
+  btnPrincipal.textContent = "Démarrer l'entraînement";
+  btnPrincipal.classList.remove("actif");
+  arreterReconnaissance();
+  if (SYNTHESE) SYNTHESE.cancel();
+  rafraichirEtat();
+}
+
+function rafraichirEtat(){
+  temoin.classList.remove("ecoute", "parle");
+  if (etat.apprend){
+    temoin.classList.add("ecoute");
+    etatTexte.textContent = "Apprentissage";
+  } else if (!etat.actif){
+    etatTexte.textContent = "À l'arrêt";
+  } else if (etat.parle){
+    temoin.classList.add("parle");
+    etatTexte.textContent = "Répond";
+  } else if (etat.enMarche){
+    temoin.classList.add("ecoute");
+    etatTexte.textContent = "À l'écoute";
+  } else {
+    etatTexte.textContent = "Reprise de l'écoute…";
+  }
+}
+
+function afficherAlerte(message){
+  const ligne = document.createElement("p");
+  ligne.style.margin = alerte.hidden ? "0" : ".6rem 0 0";
+  ligne.textContent = message;
+  alerte.appendChild(ligne);
+  alerte.hidden = false;
+}
+
+
+/* ============================================================
+   11. RÉPERTOIRE AFFICHÉ
+   ============================================================ */
+function construireRepertoire(){
+  listeRepertoire.innerHTML = "";
+  let partieCourante = "";
+
+  REPERTOIRE.forEach(entree => {
+    if (entree.partie !== partieCourante){
+      partieCourante = entree.partie;
+      const titre = document.createElement("p");
+      titre.className = "partie";
+      titre.textContent = partieCourante;
+      listeRepertoire.appendChild(titre);
+    }
+
+    const reponseAffichee = Array.isArray(entree.reponse)
+      ? entree.reponse.join("  ·  ")
+      : entree.reponse;
+
+    const rangee = document.createElement("div");
+    rangee.className = "paire";
+
+    const bEcouter = document.createElement("button");
+    bEcouter.className = "ecouter";
+    bEcouter.type = "button";
+    bEcouter.innerHTML =
+      '<span class="v"><span class="marque">℣</span>' + echapper(entree.celebrant) +
+      (entree.manuel ? ' <span class="manuel">— pas de signal fixe, à toucher</span>' : '') +
+      '</span>' +
+      '<span class="r"><span class="marque">℟</span>' + echapper(reponseAffichee) + '</span>' +
+      (entree.appris.length
+        ? '<span class="appris">appris : ' + echapper(entree.appris.join(" · ")) + '</span>'
+        : '');
+
+    bEcouter.addEventListener("click", () => {
+      deverrouillerAudio();
+      const texte = Array.isArray(entree.reponse) ? entree.reponse[0] : entree.reponse;
+      afficherReponse(texte, entree.partie);
+      entenduTexte.textContent = entree.celebrant;
+      parler([{ texte }]);
+    });
+
+    const bApprendre = document.createElement("button");
+    bApprendre.className = "apprendre";
+    bApprendre.type = "button";
+    bApprendre.textContent = "Apprendre";
+    bApprendre.hidden = !chkApprentissage.checked;
+    bApprendre.addEventListener("click", () => lancerApprentissage(entree, bApprendre));
+
+    rangee.appendChild(bEcouter);
+    rangee.appendChild(bApprendre);
+    listeRepertoire.appendChild(rangee);
+  });
+}
+
+function echapper(s){
+  const d = document.createElement("div");
+  d.textContent = s;
+  return d.innerHTML;
+}
+construireRepertoire();
+
+
+/* ============================================================
+   12. RÉGLAGES
+   ============================================================ */
+rngDebit.addEventListener("input", () => { valDebit.textContent = rngDebit.value; });
+
+selLangue.addEventListener("change", () => {
+  if (etat.actif){ arreterReconnaissance(); setTimeout(demarrerReconnaissance, 200); }
+});
+
+chkApprentissage.addEventListener("change", () => {
+  document.querySelectorAll(".apprendre").forEach(b => { b.hidden = !chkApprentissage.checked; });
+  if (chkApprentissage.checked){
+    document.getElementById("repertoire").open = true;
+    arreterTout();
+  }
+});
+
+btnOublier.addEventListener("click", () => {
+  REPERTOIRE.forEach(e => { e.appris = []; });
+  try { localStorage.removeItem(CLE); } catch (e){}
+  construireRepertoire();
+  entenduTexte.textContent = "Signaux appris effacés.";
+});
+
+window.addEventListener("beforeunload", () => { if (SYNTHESE) SYNTHESE.cancel(); });
+
+
+/* ============================================================
+   13. DIAGNOSTIC
+   ============================================================ */
+(function verifier(){
+  const manquants = [];
+  if (!SYNTHESE || !Enonce) manquants.push("la synthèse vocale");
+  if (!Reconnaissance)      manquants.push("la reconnaissance vocale");
+  if (manquants.length){
+    btnPrincipal.disabled = true;
+    afficherAlerte("Cet environnement ne fournit pas " + manquants.join(" ni ") +
+      ". Ouvrez la page dans Chrome (Android) ou Safari (iPhone), sur une adresse en https.");
+  }
+})();
+</script>
+</body>
+</html>
+  
